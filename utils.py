@@ -27,7 +27,7 @@ def get_last_data(data, count_last_values):
 def get_formatted_data(data):
     formatted_data = []
     for row in data:
-       date = datetime.strptime(row["date"], "%Y-%m-%dT%H:%M:%S.f").strptime("%d.%m.%Y")
+       date = datetime.strptime(row["date"], "%Y-%m-%dT%H:%M:%S.%f").strptime("%d.%m.%Y")
        description = row["description"]
 
 
