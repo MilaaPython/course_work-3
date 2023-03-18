@@ -27,23 +27,19 @@ def get_last_data(data, count_last_values):
 def get_formatted_data(data):
     formatted_data = []
     for row in data:
-       date = datetime.strptime(row["date"], "%Y-%m-%dT%H:%M:%S.%f").strptime("%d.%m.%Y")
+       date = datetime.strptime(row["date"], "%Y-%m-%dT%H:%M:%S.%f").strftime("%d.%m.%Y")
        description = row["description"]
 
 
-       if "from" in row:
-           sender = row["from"].split()
-           sender_bill = sender.pop(-1)
-           sender_bill = f"{sender_bill[:4]} {sender_bill[4:6]}** **** {sender_bill}"
-           sender_info = " ".join(sender)
+       sender = row["from"].split()
+       sender_bill = sender.pop(-1)
+       sender_bill = f"{sender_bill[:4]} {sender_bill[4:6]}** **** {sender_bill[-4:]}"
+       sender_info = " ".join(sender)
 
-       else:
-           sender_bill, sender_info = "", "[СКРЫТО]"
-
-
-           recipient = f"**{row['to'][-4:]}"
-           amount = f'{row["operationAmount"]["amount"]} {row["operationAmount"]["currency"]["name"]}'
-           formatted_data.append(f"""\
+    
+       recipient = f"**{row['to'][-4:]}"
+       amount = f'{row["operationAmount"]["amount"]} {row["operationAmount"]["currency"]["name"]}'
+       formatted_data.append(f"""\
 {date} {description}
 {sender_info} {sender_bill} -> Счет {recipient}
 {amount}
