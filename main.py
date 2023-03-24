@@ -1,24 +1,19 @@
-from utils import get_data, get_filtered_data, get_last_data, get_formatted_data
+import os
+from operator import itemgetter
+from utils.utils import get_operations, filter_by_state, templ_operation
 
+# Получаем полный путь к файлу с данными
+OPERATION_DIR = os.path.abspath(os.path.dirname(__file__))
+data_file = os.path.join(OPERATION_DIR, 'operations.json')
+# Получаем данные по операциям
+user_operations = get_operations(data_file)
+# Фильтруем данные - отбираем только EXECUTED операции
+user_exec = filter_by_state(user_operations, 'EXECUTED')
 
-def main():
-    OPERATIONS_URL = "https://file.notion.so/f/s/d22c7143-d55e-4f1d-aa98-e9b15e5e5efc/operations.json?spaceId=0771f0bb-b4cb-4a14-bc05-94cbd33fc70d&table=block&id=f11058ed-10ad-42ea-a13d-aad1945e5421&expirationTimestamp=1678451460680&signature=ZHZ7DveNpqei3a__SXGSt3CvMWdpQ_7OeGWPxcF8Qg8&downloadName=operations.json"
-    COUNT_LAST_VALUES = 5
-    FILTERED_EMPTY_FROM = True
-
-
-    data, info = get_data(OPERATIONS_URL)
-    if not data:
-        exit(info)
-    print(info, end="\n\n")
-
-
-    data = get_filtered_data(data, FILTERED_EMPTY_FROM)
-    data = get_last_data(data, COUNT_LAST_VALUES)
-    data = get_formatted_data(data)
-    for row in data:
-        print(row)
-
-
-if __name__ == "__main__":
-    main()
+# Сортируем данные по дате и получаем последние 5 операций
+# Для каждой операции получаем отформатированные данные и выводим их на экран
+for i in sorted(user_exec, key=itemgetter('date'), reverse=True)[:5]:
+    data, descr, source, destin, amount, currency = templ_operation(i)
+    print(data, descr)
+    print(source, '->', destin) if source else print(destin)
+    print(amount, currency, "\n")
